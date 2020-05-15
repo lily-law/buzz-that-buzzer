@@ -1,0 +1,30 @@
+{
+  "name": "u-buzz-tap",
+  "version": "1.0.0",
+  "description": "Simple buzzer SPA for multiple remote players",
+  "main": "server.js",
+  "scripts": {
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lily-law/buzz-that-buzzer.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lily-law/buzz-that-buzzer/issues"
+  },
+  "homepage": "https://github.com/lily-law/buzz-that-buzzer#readme",
+  "dependencies": {
+    "concurrently": "^5.2.0",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "uuid": "^8.0.0"
+  }
+}
