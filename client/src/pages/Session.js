@@ -10,7 +10,7 @@ export default function Session({user, sessionId, setSessionId}) {
     const socket = useRef();
     useEffect(() => {
         if (!nsp) {
-            socket.current = io('192.168.1.12:5000/');
+            socket.current = io();
             socket.current.on('connect', () => {
                 socket.current.emit('nspreq', sessionId);
                 socket.current.on('nsp', nsp => {
@@ -28,7 +28,7 @@ export default function Session({user, sessionId, setSessionId}) {
     }, []);
     useEffect(() => {
         if (nsp) {  
-            socket.current = io('192.168.1.12:5000/'+nsp);
+            socket.current = io('/'+nsp);
             socket.current.on('connect', () => {
                 socket.current.on('players', players => {
                     console.log(players)
