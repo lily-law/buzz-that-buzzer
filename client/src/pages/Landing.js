@@ -10,7 +10,6 @@ export default function Landing() {
         xhr.open('POST', '/session');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function() {
-            console.log('SessionId: ' + xhr.responseText);
             setRedirect(<Redirect to={'/session/'+xhr.responseText} />);
         };
         xhr.send(JSON.stringify({data: title}));

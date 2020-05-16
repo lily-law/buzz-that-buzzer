@@ -36,16 +36,12 @@ export default function Session() {
                             setTitle(nsp.title);
                         }
                         else {
+                            socket.current.disconnect();
                             setRedirect(<Redirect to='/' />);
                         }
-                        (() => {socket.current.disconnect();})();
+                        
                     });
                 });
-                socket.current.on('event', function(data){});
-                socket.current.on('disconnect', function(){});
-                return () => {
-                    socket.current.disconnect();
-                }
             }
             else {
                 setRedirect(<Redirect to='/' />);
@@ -54,7 +50,13 @@ export default function Session() {
     }, [match, nsp]);
     useEffect(() => {
         if (nsp && user) {  
+            socket.current.disconnect();
             socket.current = io('/'+nsp);
+            setTimeout(() => {
+                if (!socket.current.connected) {
+                    setRedirect(<Redirect to='/' />);
+                } 
+            }, 5000);
             socket.current.on('connect', () => {
                 socket.current.on('players', players => {
                     setPlayers(players);
@@ -70,15 +72,16 @@ export default function Session() {
                     setRedirect(<Redirect to='/' />);
                 });
             });
-            socket.current.on('event', function(data){});
             socket.current.on('winner', winner => {
                 setWinner(winner);
             })
-            return () => {
-                socket.current.disconnect();
-            }
         }
     }, [nsp, user]); 
+    useEffect(() => {
+        return () => {
+            socket.current && socket.current.disconnect();
+        }
+    }, []);
     const buzz = () => socket.current.emit('buzz', Date.now());
     return (<div className="session">
         {redirect && redirect}
