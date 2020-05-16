@@ -21,9 +21,7 @@ else {
 
 io.on('connection', (socket) => {
     socket.on('nspreq', sessionId => {
-        requestNSP(sessionId).then(nsp => {
-            socket.emit('nsp', nsp);
-        }, e => console.error(e));
+        requestNSP(socket, sessionId, io);
     });
 });
 

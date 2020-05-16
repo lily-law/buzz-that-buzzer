@@ -5,15 +5,19 @@ const sessions = {};
 function newSession(title, io) {
     const session = new Session(title, io);
     const id = session.id;
+    session.killSelf = () => {
+        delete sessions[id];
+    } 
     sessions[id] = session;
     return id
 }
 
-async function requestNSP(sessionId) {
-    if (!sessions[sessionId]) {
-        return false
+function requestNSP(socket, sessionId, io) {
+    let nsp = false;
+    if (sessions[sessionId]) {
+        nsp = {token: sessions[sessionId].nspToken, title: sessions[sessionId].title};
     }
-    return {token: sessions[sessionId].nspToken, title: sessions[sessionId].title}
+    socket.emit('nsp', nsp);
 }
 
 module.exports = {newSession, requestNSP};

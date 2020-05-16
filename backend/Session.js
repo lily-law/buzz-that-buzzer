@@ -16,12 +16,12 @@ function Session(title, io) {
         socket.on('disconnect', () => {
             delete this.players[socket.id];
             this.nsp.emit('players', this.getPlayers());
+            this.dieIfInactive();
         });
         socket.on('sync', () => {
             console.log(this.syncCount)
             if (this.syncCount >= Object.keys(this.players).length - 1) {
                 const winner = Object.values(this.players).filter(p => p.buzzed).sort((a, b) => a.buzzed - b.buzzed);
-                console.log(winner)
                 winner.length > 0 && this.nsp.emit('winner', winner[0].id);
                 setTimeout(() => {
                     this.syncStart = null;
@@ -34,6 +34,8 @@ function Session(title, io) {
             }
         });
     });
+    setTimeout(this.dieIfInactive, 1000*60*5);
+    this.dieIfInactive = this.dieIfInactive.bind(this);
 }
 Session.prototype.getPlayers = function() {
     return Object.values(this.players).map(({name, id, buzzed}) => ({name, id, buzzed}));
@@ -51,6 +53,9 @@ Session.prototype.sync = function() {
     setTimeout(() => {
         this.syncStart = null;
     }, 10000)
+}
+Session.prototype.dieIfInactive = function() {
+    this.getPlayers().length <= 0 && this.killSelf();
 }
 
 module.exports = Session;
