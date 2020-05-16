@@ -4,12 +4,13 @@ import './BigButton.css';
 
 export default function BigButton({buzz, muted}) {
     const handleButtonPress = e => {
-        e.preventDefault();
+        console.log('press')
+    
         buzz();
         !muted && beep();
         window && window.navigator.vibrate(10000);
     }
-    const handleButtonRelease = () => {
+    const handleButtonRelease = e => {
         !muted && stop();
         window && window.navigator.vibrate(0);
     }
@@ -19,5 +20,5 @@ export default function BigButton({buzz, muted}) {
             window && window.navigator.vibrate(0);
         }
     }, [muted]);
-    return <button className="big-button" onMouseDown={handleButtonPress} onMouseUp={handleButtonRelease}></button>
+    return <button className="big-button" onMouseDown={handleButtonPress} onMouseUp={handleButtonRelease} onTouchStart={handleButtonPress} onTouchEnd={handleButtonRelease}></button>
 }

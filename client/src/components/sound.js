@@ -4,7 +4,7 @@ let oscillators;
 let active = false;
 
 const beep = () => {
-    oscillators = [new Oscil("triangle", 200), new Oscil("saw", 400), new Oscil("square", 400)];
+    oscillators = [new Oscil("triangle", 300), new Oscil("sawtooth", 200), new Oscil("square", 400)];
     if (!active) {
         oscillators.forEach(o => o.oscillator.start(0));
         active = true;
