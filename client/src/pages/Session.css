@@ -34,3 +34,8 @@
     place-items: center center;
     height: 40vh;
 }
+.session__footer {
+    display: grid;
+    place-items: center end;
+    padding: 24px;
+}

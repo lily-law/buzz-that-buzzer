@@ -5,6 +5,8 @@ import './Session.css';
 import UserName from '../components/UserName';
 import BigButton from '../components/BigButton';
 import Player from '../components/Player';
+import mute from '../images/mute.svg';
+import unmute from '../images/unmute.svg';
 
 export default function Session() {
     const [user, setUser] = useState('');
@@ -14,6 +16,7 @@ export default function Session() {
     const [players, setPlayers] = useState([]);
     const [title, setTitle] = useState('');
     const [winner, setWinner] = useState('');
+    const [muted, setMuted] = useState(false);
     const socket = useRef();
     const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
     const match = useRouteMatch('/session/:id');
@@ -96,8 +99,11 @@ export default function Session() {
                 })}
             </section>
             <section className="session__control">
-                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz}} />}
+                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz, muted}} />}
             </section>
         </main>
+        <footer className="session__footer">
+            {muted ? <img src={mute} onClick={() => setMuted(false)} alt="muted" /> : <img src={unmute} onClick={() => setMuted(true)} alt="unmuted" />}
+        </footer>
     </div>);
 }
