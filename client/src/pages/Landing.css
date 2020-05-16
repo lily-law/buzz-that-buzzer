@@ -1,0 +1,5 @@
+.landing {
+    display: grid;
+    place-items: center center;
+    min-height: 100vh;
+}

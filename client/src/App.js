@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
 import Landing from './pages/Landing';
 import Session from './pages/Session';
 import './App.css';
 
 function App() {
-  const [user, setUser] = useState('');
-  const [sessionId, setSessionId] = useState('');
   return (
-    <div className="App">
-      {sessionId === '' ? 
-        <Landing {...{user, setUser, setSessionId}} /> :
-        <Session {...{user, sessionId, setSessionId}} />
-      }
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/session/:id">
+          <Session />
+        </Route>
+        <Route path="/">
+          <Landing />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 

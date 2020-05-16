@@ -1,0 +1,7 @@
+.big-button {
+    width: 40vh;
+    height: 40vh;
+    border-radius: 50%;
+    background: red;
+    outline: none;
+}

@@ -13,7 +13,7 @@ async function requestNSP(sessionId) {
     if (!sessions[sessionId]) {
         return false
     }
-    return sessions[sessionId].nspToken
+    return {token: sessions[sessionId].nspToken, title: sessions[sessionId].title}
 }
 
 module.exports = {newSession, requestNSP};

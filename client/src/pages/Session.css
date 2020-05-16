@@ -1,3 +1,36 @@
-.winner {
-    background: green;
+.session {
+    display: grid;
+    place-items: stretch stretch;
+    grid-template-rows: 1fr 4fr;
+}
+
+.session__header {
+    display: grid;
+    place-items: center center;
+}
+.session__link {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 100%;
+}
+.session__title {
+    text-decoration: underline;
+}
+.session__main {
+    display: grid;
+    place-items: center center;
+}
+.session__players {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    border: 1px solid grey;
+    width: 80%;
+    min-height: 10vw;
+}
+.session__control {
+    display: grid;
+    place-items: center center;
+    height: 40vh;
 }
