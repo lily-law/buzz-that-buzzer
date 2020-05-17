@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import { useRouteMatch, Redirect } from "react-router-dom";
+import { useRouteMatch, Redirect } from 'react-router-dom';
 import './Session.css';
 import UserName from '../components/UserName';
 import BigButton from '../components/BigButton';
 import Player from '../components/Player';
 import mute from '../images/mute.svg';
 import unmute from '../images/unmute.svg';
+import ShareLinks from '../components/ShareLinks';
 
 export default function Session() {
     const [user, setUser] = useState('');
@@ -47,6 +48,9 @@ export default function Session() {
                 setRedirect(<Redirect to='/' />);
             }
         }
+        return () => {
+            socket.current && socket.current.disconnect();
+        }
     }, [match, nsp]);
     useEffect(() => {
         if (nsp && user) {  
@@ -76,18 +80,16 @@ export default function Session() {
                 setWinner(winner);
             })
         }
-    }, [nsp, user]); 
-    useEffect(() => {
         return () => {
             socket.current && socket.current.disconnect();
         }
-    }, []);
+    }, [nsp, user]); 
     const buzz = () => socket.current.emit('buzz', Date.now());
     return (<div className="session">
         {redirect && redirect}
         <header className="session__header">
             <div className="session__link">
-                <div>JoinLink: {window.location.href}</div>
+                <ShareLinks {...{title}} />
                 <button onClick={() => setRedirect(<Redirect to='/' />)}>Leave</button>
             </div>
             <h1 className="session__title">{title}</h1>
