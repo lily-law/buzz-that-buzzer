@@ -26,10 +26,12 @@ export default function Session() {
     } 
     useEffect(() => {
         if (!nsp) {
-            if (isValidSessId(match.params.id)) {
+            const matchToken = match.params.id.substr(0, 36);
+            const matchTitle = match.params.id.substr(36);
+            if (isValidSessId(matchToken)) {
                 socket.current = io();
                 socket.current.on('connect', () => {
-                    socket.current.emit('nspreq', match.params.id);
+                    socket.current.emit('nspreq', {sessionId: matchToken, title: matchTitle});
                     socket.current.on('nsp', nsp => {
                         if (nsp) {
                             setNsp(nsp.token);
@@ -41,6 +43,9 @@ export default function Session() {
                         }
                         
                     });
+                    socket.current.on('disconnect', () => {
+                        setRedirect(<Redirect to='/' />);
+                    });
                 });
             }
             else {
@@ -50,7 +55,6 @@ export default function Session() {
     }, [match, nsp]);
     useEffect(() => {
         if (nsp && user) {  
-            socket.current.disconnect();
             socket.current = io('/'+nsp);
             setTimeout(() => {
                 if (!socket.current.connected) {
