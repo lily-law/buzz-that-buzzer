@@ -17,18 +17,16 @@ if (process.env.NODE_ENV === 'production') {
 else {
     app.get('*', (req, res) => {  res.sendFile(path.join(__dirname+'/client/public/index.html'));})
 }
-//build mode
 
 io.on('connection', (socket) => {
-    socket.on('nspreq', sessionId => {
-        requestNSP(socket, sessionId, io);
+    socket.on('nspreq', ({sessionId, title}) => {
+        requestNSP(socket, sessionId, title, io);
     });
 });
 
 app.post('/session', jsonParser, function (req, res) {
-    const sessionId = newSession(req.body.data, io);
-    console.log(sessionId+' created!')
-    res.send(sessionId);
+    const session = newSession(req.body.data, io);
+    res.send(session.nspToken+session.title);
 });
 
 http.listen(port, () => {
