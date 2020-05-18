@@ -19,7 +19,7 @@ const beep = () => {
 
 const stop = async () => {
     if (release) {
-        await release;
+        await release
     }
     if (active) {
         release = null;
@@ -29,8 +29,6 @@ const stop = async () => {
     }
 }
 
-module.exports = {beep, stop};
-
 function Oscil(type, freq, context) {
     this.oscillator = context.createOscillator();
     this.oscillator.type = type;
@@ -39,3 +37,5 @@ function Oscil(type, freq, context) {
     this.oscillator.connect(gainNode);
     gainNode.connect(context.destination);
 }
+
+export {beep, stop};
