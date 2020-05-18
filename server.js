@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
 
 app.post('/session', jsonParser, function (req, res) {
     const session = newSession(req.body.data, io);
-    res.send(session.nspToken+session.title);
+    res.send(session.token+session.title);
 });
 
 http.listen(port, () => {

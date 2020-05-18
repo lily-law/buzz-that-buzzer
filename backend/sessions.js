@@ -11,23 +11,23 @@ function newSession(title, io, token) {
     } 
     sessions[nspToken] = session;
     console.log(session.nspToken+' created!');
-    return {nspToken, title}
+    return {token: nspToken, title}
 }
 
 function requestNSP(socket, nspToken, title, io) {
     let nsp = false;
     if (sessions[nspToken]) {
         nsp = {token: sessions[nspToken].nspToken, title: sessions[nspToken].title};
-        if (sessions[nspToken].getPlayers().length <= 0) { // if there are players session will dieIfInactive when they disconnect
-            sessions[nspToken].selfTimeOut = setTimeout(() => {
-                sessions[nspToken].dieIfInactive();
-                socket.disconnect();
-            }, 1000*60*30);
-        }
     }
     else {
         console.log('reviving: '+nspToken);
-        nsp = newSession(title, io, nspToken).nspToken;
+        nsp = newSession(title, io, nspToken);
+    }
+    if (sessions[nspToken]) {
+        sessions[nspToken].entered.push(socket);
+        sessions[nspToken].selfTimeOut = setTimeout(() => {
+            sessions[nspToken] && sessions[nspToken].dieIfInactive();
+        }, 1000*60*15);
     }
     socket.emit('nsp', nsp);
 }
