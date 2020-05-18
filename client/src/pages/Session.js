@@ -8,8 +8,10 @@ import Player from '../components/Player';
 import mute from '../images/mute.svg';
 import unmute from '../images/unmute.svg';
 import ShareLinks from '../components/ShareLinks';
+const sound = () => require('../components/sound');
 
 export default function Session() {
+    const {beep, stop} = sound();
     const [user, setUser] = useState('');
     const [redirect, setRedirect] = useState();
     const [nsp, setNsp] = useState();
@@ -18,7 +20,8 @@ export default function Session() {
     const [title, setTitle] = useState('');
     const [winner, setWinner] = useState('');
     const [muted, setMuted] = useState(false);
-    const socket = useRef();
+    const lobbySocket = useRef();
+    const sessionSocket = useRef();
     const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
     const match = useRouteMatch('/session/:id');
     let playerColours = {
@@ -26,25 +29,20 @@ export default function Session() {
         avaible: ['tomato', 'aqua', 'aquamarine', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgreen']
     } 
     useEffect(() => {
-        if (!nsp) {
+        const knockKnock = () => {
             const matchToken = match.params.id.substr(0, 36);
             const matchTitle = match.params.id.substr(36);
             if (isValidSessId(matchToken)) {
-                socket.current = io();
-                socket.current.on('connect', () => {
-                    socket.current.emit('nspreq', {sessionId: matchToken, title: matchTitle});
-                    socket.current.on('nsp', nsp => {
-                        if (nsp) {
-                            setNsp(nsp.token);
-                            setTitle(nsp.title);
-                        }
-                        else {
-                            socket.current.disconnect();
-                            setRedirect(<Redirect to='/' />);
-                        }
-                        
+                lobbySocket.current && !lobbySocket.current.disconnected && lobbySocket.current.disconnect();
+                lobbySocket.current = io();
+                lobbySocket.current.on('connect', () => {
+                    lobbySocket.current.emit('nspreq', {sessionId: matchToken, title: matchTitle});
+                    lobbySocket.current.on('nsp', nsp => {
+                        setNsp(nsp.token);
+                        setTitle(nsp.title);
+                        join();
                     });
-                    socket.current.on('disconnect', () => {
+                    lobbySocket.current.on('disconnect', () => {
                         setRedirect(<Redirect to='/' />);
                     });
                 });
@@ -53,42 +51,46 @@ export default function Session() {
                 setRedirect(<Redirect to='/' />);
             }
         }
-        return () => {
-            socket.current && socket.current.disconnect();
-        }
-    }, [match, nsp]);
-    useEffect(() => {
-        if (nsp && user) {  
-            socket.current = io('/'+nsp);
-            setTimeout(() => {
-                if (!socket.current.connected) {
-                    setRedirect(<Redirect to='/' />);
-                } 
-            }, 5000);
-            socket.current.on('connect', () => {
-                socket.current.on('players', players => {
-                    setPlayers(players);
+        const join = () => {
+            if (nsp && user) {
+                sessionSocket.current && !sessionSocket.current.disconnected && sessionSocket.current.disconnect();
+                sessionSocket.current = io('/'+nsp);
+                sessionSocket.current.on('connect', () => {
+                    sessionSocket.current.on('players', players => {
+                        setPlayers(players);
+                    });
+                    
                 });
-                socket.current.emit('join', user);
-                socket.current.on('joined', id => {
+                sessionSocket.current.emit('join', user);
+                sessionSocket.current.on('joined', id => {
                     setId(id);
                 });
-                socket.current.on('sync', () => {
-                    socket.current.emit('sync', Date.now());
+                sessionSocket.current.on('sync', () => {
+                    sessionSocket.current.emit('sync', Date.now());
                 })
-                socket.current.on('disconnect', function(){
-                    setRedirect(<Redirect to='/' />);
+                sessionSocket.current.on('disconnect', function(){
+                //  setRedirect(<Redirect to='/' />);
                 });
-            });
-            socket.current.on('winner', winner => {
-                setWinner(winner);
-            })
+                sessionSocket.current.on('winner', winner => {
+                    setWinner(winner);
+                });
+            }
+        };
+        if (!nsp) {
+            knockKnock();
         }
+        else {
+            !id && join();
+        } 
+    }, [nsp, user, id, match.params.id]);
+
+    useEffect(() => {
         return () => {
-            socket.current && socket.current.disconnect();
+            sessionSocket.current && sessionSocket.current.disconnect();
+            lobbySocket.current && lobbySocket.current.disconnect();
         }
-    }, [nsp, user]); 
-    const buzz = () => socket.current.emit('buzz', Date.now());
+    }, []);
+    const buzz = () => sessionSocket.current.emit('buzz', Date.now());
     return (<div className="session">
         {redirect && redirect}
         <header className="session__header">
@@ -108,7 +110,7 @@ export default function Session() {
                 })}
             </section>
             <section className="session__control">
-                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz, muted}} />}
+                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz, muted, beep, stop}} />}
             </section>
         </main>
         <footer className="session__footer">
