@@ -1,18 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import beep from '../components/sound';
 import './BigButton.css';
 
-export default function BigButton({buzz, muted, beep, stop}) {
+export default function BigButton({buzz, muted = false}) {
     const handleButtonPress = e => {
         buzz();
-        !muted && beep();
+        !muted && beep(500);
     }
-    const handleButtonRelease = e => {
-        stop();
-    }
-    useEffect(() => {
-        return () => {
-            stop();
-        }
-    }, [muted, stop]);
-    return <button className="big-button" onMouseDown={handleButtonPress} onMouseUp={handleButtonRelease} onTouchStart={handleButtonPress} onTouchEnd={handleButtonRelease}></button>
+    return <button className="big-button" onMouseDown={handleButtonPress} onTouchStart={handleButtonPress}></button>
 }

@@ -8,10 +8,8 @@ import Player from '../components/Player';
 import mute from '../images/mute.svg';
 import unmute from '../images/unmute.svg';
 import ShareLinks from '../components/ShareLinks';
-const sound = () => require('../components/sound');
 
 export default function Session() {
-    const {beep, stop} = sound();
     const [user, setUser] = useState('');
     const [redirect, setRedirect] = useState();
     const [nsp, setNsp] = useState();
@@ -110,7 +108,7 @@ export default function Session() {
                 })}
             </section>
             <section className="session__control">
-                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz, muted, beep, stop}} />}
+                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz, muted}} />}
             </section>
         </main>
         <footer className="session__footer">

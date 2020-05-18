@@ -1,32 +1,17 @@
-
-
-let oscillators;
-let active = false;
-let release;
-
-const beep = () => {
+export default function beep(length = 250, options = {sound: true, vibrate: true}) {
     const ctx = new AudioContext();
-    oscillators = [new Oscil("triangle", 300, ctx), new Oscil("sawtooth", 200, ctx), new Oscil("square", 400, ctx)];
-    if (!active) {
-        oscillators.forEach(o => o.oscillator.start(0));
-        window && window.navigator.vibrate(10000);
-        active = true;
+    options.vibrate && window && window.navigator.vibrate(length);
+    if (options.sound) {
+        let oscillators = [new Oscil("triangle", 300, ctx), new Oscil("sawtooth", 200, ctx), new Oscil("square", 400, ctx)];
+        oscillators.forEach(o => {
+            o.oscillator.start(0);
+            o.oscillator.stop(ctx.currentTime + length);
+        });
     }
-    release = new Promise(resolve => {
-        setTimeout(resolve, 500);
-    });
-}
-
-const stop = async () => {
-    if (release) {
-        await release
-    }
-    if (active) {
-        release = null;
-        oscillators.forEach(o => o.oscillator.stop(0));
+    setTimeout(() => {
+        ctx.close()
         window && window.navigator.vibrate(0);
-        active = false;
-    }
+    }, length);
 }
 
 function Oscil(type, freq, context) {
@@ -37,5 +22,3 @@ function Oscil(type, freq, context) {
     this.oscillator.connect(gainNode);
     gainNode.connect(context.destination);
 }
-
-export {beep, stop};
