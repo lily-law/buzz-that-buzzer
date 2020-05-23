@@ -93,7 +93,7 @@ export default function Session() {
         {redirect && redirect}
         <header className="session__header">
             <div className="session__link">
-                <ShareLinks {...{title}} />
+                <ShareLinks {...{title, user}} />
                 <button onClick={() => setRedirect(<Redirect to='/' />)}>Leave</button>
             </div>
             <h1 className="session__title">{title}</h1>
