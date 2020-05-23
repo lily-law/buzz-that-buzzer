@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function ShareLinks({title}) {
+export default function ShareLinks({title, user}) {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState(null);
     let timeout;
@@ -19,11 +19,13 @@ export default function ShareLinks({title}) {
 
     const links = () => {
         if (window.navigator.share) {
+            setIsOpen(false);
             window.navigator.share({
-            title: 'Link to '+title+' session',
-            url: window.location.href
+                title: 'U-Buzz-Tap '+title+' session',
+                text: 'Invite from '+user,
+                url: window.location.href
             }).then(() => {
-                setStatus('Link Shared!')
+                setStatus('Link Shared!');
             })
             .catch(console.error);
         } else {
