@@ -3,11 +3,11 @@ import io from 'socket.io-client';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import './Session.css';
 import UserName from '../components/UserName';
-import BigButton from '../components/BigButton';
 import Player from '../components/Player';
-import mute from '../images/mute.svg';
-import unmute from '../images/unmute.svg';
 import ShareLinks from '../components/ShareLinks';
+import Control from '../components/Control';
+import exitIcon from '../images/exiticon.svg';
+import expandIcon from '../images/expandicon.svg';
 
 export default function Session() {
     const [user, setUser] = useState('');
@@ -17,16 +17,26 @@ export default function Session() {
     const [players, setPlayers] = useState([]);
     const [title, setTitle] = useState('');
     const [winner, setWinner] = useState('');
+    const [controlOpen, setControlOpen] = useState(true);
+    const [playersOpen, setPlayersOpen] = useState(true);
     const [muted, setMuted] = useState(false);
+    const toggleControl = () => {
+        controlOpen && setPlayersOpen(true);
+        setControlOpen(!controlOpen);
+    }
+    const togglePlayers = () => {
+        playersOpen && setControlOpen(true);
+        setPlayersOpen(!playersOpen);
+    }
     const lobbySocket = useRef();
     const sessionSocket = useRef();
     const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
     const match = useRouteMatch('/session/:id');
-    let playerColours = {
-        inUse: {},
-        avaible: ['tomato', 'aqua', 'aquamarine', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgreen']
-    } 
     useEffect(() => {
+        const playerColours = {
+            inUse: {},
+            avaible: ['tomato', 'aqua', 'aquamarine', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgreen']
+        } 
         const knockKnock = () => {
             const matchToken = match.params.id.substr(0, 36);
             const matchTitle = match.params.id.substr(36);
@@ -55,9 +65,18 @@ export default function Session() {
                 sessionSocket.current = io('/'+nsp);
                 sessionSocket.current.on('connect', () => {
                     sessionSocket.current.on('players', players => {
-                        setPlayers(players);
+                        setPlayers(players.map(p => {
+                            let colour;
+                            if (!playerColours.inUse.hasOwnProperty(p.id)) {
+                                colour = playerColours.avaible.pop();
+                                playerColours.inUse[p.id] = colour;
+                            }
+                            else {
+                                colour = playerColours.inUse[p.id];
+                            }
+                            return {...p, colour }
+                        }));
                     });
-                    
                 });
                 sessionSocket.current.emit('join', user);
                 sessionSocket.current.on('joined', id => {
@@ -65,9 +84,6 @@ export default function Session() {
                 });
                 sessionSocket.current.on('sync', () => {
                     sessionSocket.current.emit('sync', Date.now());
-                })
-                sessionSocket.current.on('disconnect', function(){
-                //  setRedirect(<Redirect to='/' />);
                 });
                 sessionSocket.current.on('winner', winner => {
                     setWinner(winner);
@@ -81,7 +97,6 @@ export default function Session() {
             !id && join();
         } 
     }, [nsp, user, id, match.params.id]);
-
     useEffect(() => {
         return () => {
             sessionSocket.current && sessionSocket.current.disconnect();
@@ -89,30 +104,40 @@ export default function Session() {
         }
     }, []);
     const buzz = () => sessionSocket.current.emit('buzz', Date.now());
-    return (<div className="session">
-        {redirect && redirect}
-        <header className="session__header">
-            <div className="session__link">
-                <ShareLinks {...{title, user}} />
-                <button onClick={() => setRedirect(<Redirect to='/' />)}>Leave</button>
+    return (
+        <div className="session">
+            {redirect && redirect}
+            <div className="session__header--wrapper ribbon">
+                <header className="session__header">
+                    <button onClick={() => setRedirect(<Redirect to='/' />)}><img className="button-icon" src={exitIcon} title="Exit Saloon" alt="Exit" /></button>
+                    <h1 className="session__title" title={title}>{title}</h1>
+                    <ShareLinks {...{title, user}} />
+                </header>
             </div>
-            <h1 className="session__title">{title}</h1>
-        </header>
-        <main className="session__main">
-            <section className="session__players">
-                {players.map(p => {
-                    if (!playerColours.inUse.hasOwnProperty(p.id)) {
-                        playerColours.inUse[p.id] = playerColours.avaible.pop();
-                    }
-                    return <Player key={p.id+winner} {...{...p, colour: playerColours.inUse[p.id], winner: p.id === winner}} />
-                })}
-            </section>
-            <section className="session__control">
-                {winner ? <h2>{players.find(p => p.id === winner).name}</h2> : !user ? <UserName {...{user, setUser}} /> : !id ? <p>joining...</p> : <BigButton {...{buzz, muted}} />}
-            </section>
-        </main>
-        <footer className="session__footer">
-            {muted ? <img src={mute} onClick={() => setMuted(false)} alt="muted" /> : <img src={unmute} onClick={() => setMuted(true)} alt="unmuted" />}
-        </footer>
-    </div>);
+            <main className="session__main">
+                {id &&
+                <section className={`session__players ${playersOpen ? '' : 'session__players--closed'}`}>
+                    <button className="session__players__toggle long-plate" onClick={togglePlayers}>Player Board<img src={expandIcon} className={`button-icon ${playersOpen ? '' : 'flip'}`} title={playersOpen ? 'Minimize' : 'Expand'} alt={playersOpen ? 'Close' : 'Open'} /></button>
+                    {playersOpen && <div className="session__players__board">
+                        {players.map(p => 
+                            <Player key={p.id} {...{...p, winner: p.id === winner}} />
+                        )}
+                    </div>}
+                </section>
+                }
+                {id ?
+                <section className={`session__control ${controlOpen ? '' : 'session__control--closed'}`}>
+                    {controlOpen && <Control {...{winner, players, buzz, setMuted, muted}} />}
+                    <button className="session__control__toggle long-plate" onClick={toggleControl}>{user}'s Buzzer <img src={expandIcon} className={`button-icon ${controlOpen ? 'flip' : ''}`} title={controlOpen ? 'Minimize' : 'Expand'} alt={controlOpen ? 'Close' : 'Open'} /></button>
+                </section> : 
+                <section className="session__control">
+                    {!user ? <UserName {...{user, setUser}} /> : <p>joining...</p>}
+                </section>
+                }
+            </main>
+            <footer className="session__footer">
+    
+            </footer>
+        </div>
+    );
 }

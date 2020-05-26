@@ -1,38 +1,82 @@
-.App {
+:root {
+  --bg-colour: #C9BB80;
+  --primary-colour: #A54835;
+  --secondary-colour: #F1CF4A;
+  --tertiary-colour: #C6823E; 
+  --off-white-colour: #DFDFDF;
+  --primary-font: 'Rye', cursive;
+  --title-font: 'Ultra', serif;
+}
+
+body {
+  background: var(--bg-colour);
+}
+
+main {
+  margin: 0 auto;
+  color: var(--primary-colour);
+  font-family: var(--primary-font);
+}
+
+h1, h2 {
+  color: var(--primary-colour);
+  font-family: var(--title-font);
+  font-weight: 400;
+}
+
+.ribbon {
+  background: url(./images/ribbon.svg) no-repeat center;
+  border: none;
+  font-family: var(--primary-font);
+  text-align: center;
+  color: var(--primary-colour);
+}
+
+.plate {
+  background: url(./images/plate.svg) no-repeat center;
+  background-size: 100% 100%;
+  border: none;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.long-plate {
+  background: url(./images/longplate.svg) no-repeat center;
+  background-size: 100% 100%;
+  border: none;
+  text-align: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--primary-colour);
+  font-family: var(--title-font);
+  text-shadow: -1px 0 var(--off-white-colour), 0 1px var(--off-white-colour), 1px 0 var(--off-white-colour), 0 -1px var(--off-white-colour);
+  font-weight: 400;
+  cursor: pointer;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+input {
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--primary-font);
+  text-align: center;
+  color: var(--primary-colour);
 }
 
-.App-link {
-  color: #61dafb;
+.flip {
+  transform: rotate(180deg);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.button-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.mute-control {
+  position: absolute;
+  bottom: 84px;
+  right: 24px;
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import icon from '../images/shareicon.svg';
 
 export default function ShareLinks({title, user}) {
     const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +43,7 @@ export default function ShareLinks({title, user}) {
     return (
         <section>
             <input style={{opacity: 0, width: '1px', position: "absolute", left: '-100vw'}} ref={linkRef} value={window.location.href} readOnly />
-            {isOpen ? message ? <div>{message}</div> : links() : <button onClick={() => setIsOpen(true)}>Share Link</button>}
+            {isOpen ? message ? <div>{message}</div> : links() : <button onClick={() => setIsOpen(true)}><img className="button-icon" src={icon} title="Share link" alt="Share" /></button>}
         </section>
     )
 }
