@@ -1,5 +1,51 @@
 .landing {
     display: grid;
+    place-items: center start;
+    align-content: start;
+    height: 100%;
+    max-width: 480px;
+    grid-template-rows: 1fr auto auto;
+}
+
+.intro__tagline {
+    width: 75%;
+    margin-left: 32px;
+}
+
+.intro__text {
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.setup {
+    margin-top: 32px;
+    place-self: center center;
+    display: grid;
     place-items: center center;
-    min-height: 100vh;
+    grid-template-rows: 1fr 1fr;
+    width: 280px;
+    min-height: 200px;
+    max-width: 80%;
+    overflow: visible;
+    padding: 5%;
+}
+
+.setup__ribbon {
+    width: 160%;
+    height: 100%;
+    display: grid;
+    place-items: center center;
+}
+.setup__input {
+    height: 40%;
+    width: 74%;
+    margin-top: -5%;
+    font-size: 24px;
+}
+.setup__input::placeholder {
+    color: var(--tertiary-colour);
+}
+.setup__submit {
+    font-size: 28px;
+    place-self: start center;
 }
