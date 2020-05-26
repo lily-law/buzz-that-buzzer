@@ -1,3 +1,106 @@
-.winner {
-    background: green;
+.session {
+    display: grid;
+    place-items: center center;
+    grid-template-rows: 15vh 1fr;
+    position: relative;
+    min-height: 100vh;
+}
+.session__header--wrapper {
+    display: grid;
+    place-items: center center;
+    padding: 0 64px;
+    min-height: 80px;
+}
+.session__header {
+    width: 100%;
+    min-width: 280px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 5% 5% 12% 5%;
+}
+.session__title {
+    width: 75%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; 
+    font: var(--primary-font);
+    font-size: 32px;
+    margin: 0;
+    padding: 0;
+    margin-top: -3%;
+}
+.session__main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 720px;
+    height: 100%;
+}
+.session__players {
+    width: 100%;
+    display: grid;
+    place-items: end center;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+}
+.session__players--closed {
+    height: auto;
+}
+.session__players__board {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5%;
+    width: 80%;
+    height: 100%;
+}
+.session__players__toggle {
+    height: 60px;
+    width: 100%;
+    max-width: 360px;
+    font-size: 22px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 32px;
+}
+.session__control {
+    display: grid;
+    place-items: center center;
+    grid-template-rows: 1fr auto;
+    height: 100%;
+    width: 100%;
+    max-width: 360px;
+    position: relative;
+}
+.session__control .player {
+    width: 60%;
+    height: 60%;
+}
+.session__control--closed {
+    background: none;
+    height: auto;
+}
+.session__control__toggle {
+    height: 60px;
+    width: 100%;
+    max-width: 360px;
+    font-size: 22px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 32px;
+}
+.session__footer {
+    display: grid;
+    place-items: center end;
+    padding: 24px;
 }

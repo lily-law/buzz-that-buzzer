@@ -2,18 +2,34 @@ const Session = require('./Session');
 
 const sessions = {};
 
-function newSession(title, io) {
-    const session = new Session(title, io);
-    const id = session.id;
-    sessions[id] = session;
-    return id
+function newSession(title, io, token) {
+    const session = new Session(title, io, token);
+    const nspToken = session.nspToken;
+    session.killSelf = () => {
+        console.log('removed: '+nspToken)
+        delete sessions[nspToken];
+    } 
+    sessions[nspToken] = session;
+    console.log(session.nspToken+' created!');
+    return {token: nspToken, title}
 }
 
-async function requestNSP(sessionId) {
-    if (!sessions[sessionId]) {
-        return false
+function requestNSP(socket, nspToken, title, io) {
+    let nsp = false;
+    if (sessions[nspToken]) {
+        nsp = {token: sessions[nspToken].nspToken, title: sessions[nspToken].title};
     }
-    return sessions[sessionId].nspToken
+    else {
+        console.log('reviving: '+nspToken);
+        nsp = newSession(title, io, nspToken);
+    }
+    if (sessions[nspToken]) {
+        sessions[nspToken].entered.push(socket);
+        sessions[nspToken].selfTimeOut = setTimeout(() => {
+            sessions[nspToken] && sessions[nspToken].dieIfInactive();
+        }, 1000*60*15);
+    }
+    socket.emit('nsp', nsp);
 }
 
 module.exports = {newSession, requestNSP};

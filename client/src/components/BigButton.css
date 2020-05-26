@@ -1,0 +1,15 @@
+.big-button {
+    outline: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: black;
+}
+.big-button svg { 
+    border-radius: 50%;
+    box-shadow: -3px 3px black;
+}
+.big-button:active svg {
+    box-shadow: -3px 3px white;
+    opacity: 0.7;
+}

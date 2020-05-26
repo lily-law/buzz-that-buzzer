@@ -1,0 +1,15 @@
+.player {
+    display: grid;
+    place-items: center center;
+    width: 150px;
+    max-width: 50vw;
+    height: 100px;
+    font-size: 24px;
+    border-radius: 5%;
+}
+.winner {
+    border: 5px solid gold;
+}
+.buzzing {
+    border: 5px dotted blue;
+}
