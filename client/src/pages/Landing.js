@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Redirect } from 'react-router-dom';
 import './Landing.css';
 import addIcon from '../images/add.svg';
@@ -13,18 +13,35 @@ export default function Landing({userData, setUserData}) {
         {title:"Test round two", link: ""}, 
         {title:"Another test round", link: ""}
     ]);
+    const userNameRef = useRef();
+    const sessionTitleRef = useRef();
     const createSession = () => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/session');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-            setRedirect(<Redirect to={'/session/'+xhr.responseText} />);
-        };
-        xhr.send(JSON.stringify({data: title}));
+        if (!userData.name) { 
+            userNameRef.current.focus();
+            userNameRef.current.style.border = "1px solid red";
+        }
+        else if (!title) {
+            sessionTitleRef.current.focus();
+            sessionTitleRef.current.style.border = "1px solid red";
+        }
+        else {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/session');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                setRedirect(<Redirect to={'/session/'+xhr.responseText} />);
+            };
+            xhr.send(JSON.stringify({data: title}));             
+        }
     };
     const handleSetUserName = e => {
+        userNameRef.current.style.border = "none";
         setUserData({...userData, name: e.target.value});
     };
+    const handleSetTitle = e => {
+        sessionTitleRef.current.style.border = "none";
+        setTitle(e.target.value);
+    }
 
     useEffect(() => {
         // TODO check url for session
@@ -39,7 +56,7 @@ export default function Landing({userData, setUserData}) {
                 <p>Create a session. Share the link. Buzz in!</p>
             </section>
             <section className="landing__setup">
-                <input className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} value={userData.name} />
+                <input ref={userNameRef} className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} value={userData.name} />
                 <div className="setup__sessions">
                     {sessions.length > 0 && <>
                         <button className="sessions__delete">
@@ -54,7 +71,7 @@ export default function Landing({userData, setUserData}) {
                     </>}
                 </div>
                 <div className="setup__new-session">
-                    <input className="new-session__input" type="text" onChange={e => setTitle(e.target.value)} value={title} placeholder="New Session" />
+                    <input ref={sessionTitleRef} className="new-session__input" type="text" onChange={handleSetTitle} value={title} placeholder="New Session" />
                     <button className="new-session__submit" onClick={createSession}>
                         <img src={addIcon} alt="+" />
                     </button>
