@@ -1,51 +1,51 @@
 .landing {
     display: grid;
-    place-items: center start;
-    align-content: start;
-    height: 100%;
-    max-width: 480px;
-    grid-template-rows: 1fr auto auto;
-}
-
-.intro__tagline {
-    width: 75%;
-    margin-left: 32px;
-}
-
-.intro__text {
-    font-size: 14px;
-    line-height: 24px;
-}
-
-.setup {
-    margin-top: 32px;
-    place-self: center center;
-    display: grid;
-    place-items: center center;
     grid-template-rows: 1fr 1fr;
-    width: 280px;
-    min-height: 200px;
-    max-width: 80%;
-    overflow: visible;
-    padding: 5%;
+    grid-template-columns: auto;
+    min-height: 100vh;
+    place-items: stretch stretch;
 }
-
-.setup__ribbon {
-    width: 160%;
-    height: 100%;
+.landing__info {
+    background: var(--white);
+    place-self: center center;
+    max-width: 80%;
+}
+.landing__setup {
+    background: var(--bg-colour-2);
     display: grid;
     place-items: center center;
 }
-.setup__input {
-    height: 40%;
-    width: 74%;
-    margin-top: -5%;
-    font-size: 24px;
+.setup__user-name {
+    box-sizing: border-box;
+    width: 100%;
+    background: var(--white);
+    border: none;
+    padding: 16px;
+    padding-left: 10vw;
 }
-.setup__input::placeholder {
-    color: var(--tertiary-colour);
+.setup__new-session {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    max-width: 90vw;
 }
-.setup__submit {
-    font-size: 28px;
-    place-self: start center;
+.new-session__input {
+    text-align: center;
+    max-width: 70%;
+}
+.setup__sessions {
+    display: grid;
+    grid-template-columns: 27px auto 40px;
+    width: 80%;
+}
+.sessions_list {
+    width: 80%;
+}
+
+@media only screen and (orientation: landscape) {
+    .landing {
+        grid-template-rows: auto;
+        grid-template-columns: 1fr 1fr;
+    }
 }

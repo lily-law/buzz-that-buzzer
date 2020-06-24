@@ -1,6 +1,7 @@
 :root {
-  --bg-colour: #C9BB80;
-  --primary-colour: #A54835;
+  --bg-colour-1: #ffffff;
+  --bg-colour-2: #c4c4c4;
+  --primary-colour: #000000;
   --secondary-colour: #F1CF4A;
   --tertiary-colour: #C6823E; 
   --off-white-colour: #DFDFDF;
@@ -9,7 +10,7 @@
 }
 
 body {
-  background: var(--bg-colour);
+  background: var(--bg-colour-1);
 }
 
 main {
@@ -24,59 +25,25 @@ h1, h2 {
   font-weight: 400;
 }
 
-.ribbon {
-  background: url(./images/ribbon.svg) no-repeat center;
-  border: none;
-  font-family: var(--primary-font);
-  text-align: center;
-  color: var(--primary-colour);
+h1 {
+  font-size: 36px;
 }
 
-.plate {
-  background: url(./images/plate.svg) no-repeat center;
-  background-size: 100% 100%;
-  border: none;
-  text-align: center;
+h2 {
+  font-size: 18px;
 }
 
-.long-plate {
-  background: url(./images/longplate.svg) no-repeat center;
-  background-size: 100% 100%;
-  border: none;
-  text-align: center;
-}
-
-button {
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--primary-colour);
-  font-family: var(--title-font);
-  text-shadow: -1px 0 var(--off-white-colour), 0 1px var(--off-white-colour), 1px 0 var(--off-white-colour), 0 -1px var(--off-white-colour);
-  font-weight: 400;
-  cursor: pointer;
+p {
+  font-size: 12px;
 }
 
 input {
-  background: none;
+  font-size: 18px;
+}
+
+button {
   border: none;
-  outline: none;
-  font-family: var(--primary-font);
-  text-align: center;
-  color: var(--primary-colour);
-}
-
-.flip {
-  transform: rotate(180deg);
-}
-
-.button-icon {
-  width: 40px;
-  height: 40px;
-}
-
-.mute-control {
-  position: absolute;
-  bottom: 84px;
-  right: 24px;
+  padding: 0;
+  background: none;
+  cursor: pointer;
 }

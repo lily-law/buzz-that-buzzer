@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,14 +9,20 @@ import Session from './pages/Session';
 import './App.css';
 
 function App() {
+  const [userData, setUserData] = useState({
+    name: ''
+  });
+  useEffect(() => {
+    // TODO check localstorage for userData
+  }, []);
   return (
     <Router>
       <Switch>
         <Route path="/session/:id">
-          <Session />
+          <Session {...{userData, setUserData}} />
         </Route>
         <Route path="/">
-          <Landing />
+          <Landing {...{userData, setUserData}} />
         </Route>
       </Switch>
     </Router>
