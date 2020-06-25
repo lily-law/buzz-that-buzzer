@@ -57,7 +57,7 @@ export default function Session({userData, setUserData, addToSessions, sessions}
                 sessionSocket.current.on('connect', () => {
                     sessionSocket.current.on('players', players => {
                         setPlayers(players.map(p => {
-                            let colour;
+                            let colour = 'white';
                             if (!playerColours.inUse.hasOwnProperty(p.id)) {
                                 colour = playerColours.avaible.pop();
                                 playerColours.inUse[p.id] = colour;
