@@ -1,18 +1,3 @@
-:root {
-  --bg-colour-1: #ffffff;
-  --bg-colour-2: #c4c4c4;
-  --primary-colour: #000000;
-  --secondary-colour: #F1CF4A;
-  --tertiary-colour: #C6823E; 
-  --off-white-colour: #DFDFDF;
-  --primary-font: 'Rye', cursive;
-  --title-font: 'Ultra', serif;
-}
-
-body {
-  background: var(--bg-colour-1);
-}
-
 main {
   margin: 0 auto;
   color: var(--primary-colour);

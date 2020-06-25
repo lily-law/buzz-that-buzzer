@@ -3,13 +3,27 @@
     margin: 0;
     padding: 0;
     border-radius: 50%;
-    background: black;
+    background: radial-gradient(#ff0000, #aa0000);
+    width: 40vw;
+    height: 40vw;
+    box-shadow: 0px 10px 1px black;
+    outline: none;
+    border: none;
 }
-.big-button svg { 
-    border-radius: 50%;
-    box-shadow: -3px 3px black;
+.big-button:focus, .big-button::-moz-focus-inner {
+    outline: none;
+    border: 0;
 }
-.big-button:active svg {
-    box-shadow: -3px 3px white;
-    opacity: 0.7;
+.big-button:active {
+    transform: translateY(5px);
+    box-shadow: 0px 10px 1px white;
+    border: 5px solid black;
+    border-bottom: none;
+    background: radial-gradient(#aa0000, #cc0000);
+}
+@media only screen and (orientation: landscape) {
+    .big-button {
+        width: 40vh;
+        height: 40vh;
+    }
 }
