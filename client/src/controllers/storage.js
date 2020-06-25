@@ -12,7 +12,7 @@ async function writeToStore(name, data) {
         throw "writeToStore data must be of type Array or Object!"
     }
     if (stored) { // append to store[name]
-        const newData = Array.isArray(data) ? [...data, ...stored] : {...data, ...stored};
+        const newData = Array.isArray(data) ? [...data, ...stored] : {...stored, ...data};
         await localStorage.setItem(name, JSON.stringify(newData));
     }
     else { // create store[name]

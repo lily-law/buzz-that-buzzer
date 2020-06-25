@@ -2,7 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Redirect } from 'react-router-dom';
 import './Landing.css';
 import addIcon from '../images/add.svg';
-import enterIcon from '../images/enter.svg'
+import enterIcon from '../images/enter.svg';
+import {writeToStore} from '../controllers/storage';
 
 export default function Landing({userData, updateUserData, sessions, addToSessions, removeSession, test}) {
     const [redirect, setRedirect] = useState();
@@ -43,6 +44,9 @@ export default function Landing({userData, updateUserData, sessions, addToSessio
         sessionTitleRef.current.style.border = "none";
         setTitle(e.target.value);
     }
+    const storeUserData = () => {
+        writeToStore("userData", userData);
+    }
     return (<>
         {redirect && redirect}
         <main className="landing">
@@ -52,7 +56,7 @@ export default function Landing({userData, updateUserData, sessions, addToSessio
                 <p>Create a session. Share the link. Buzz in!</p>
             </section>
             <section className="landing__setup">
-                <input ref={userNameRef} className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} value={userData.name} />
+                <input ref={userNameRef} className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} value={userData.name} onBlur={storeUserData} />
                 <div className="setup__sessions">
                     {sessions.length > 0 && <>
                         <ul className="sessions__list">
