@@ -1,106 +1,45 @@
 .session {
     display: grid;
-    place-items: center center;
-    grid-template-rows: 15vh 1fr;
+    place-items: stretch stretch;
     position: relative;
     min-height: 100vh;
-}
-.session__header--wrapper {
-    display: grid;
-    place-items: center center;
-    padding: 0 64px;
-    min-height: 80px;
+    background-color: var(--bg-colour-2);
 }
 .session__header {
     width: 100%;
-    min-width: 280px;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 5% 5% 12% 5%;
+    background-color: var(--bg-colour-1);
+    display: grid;
+    place-items: center center;
+    grid-template-columns: 40px auto 40px;
+    padding: 0 5vw;
+    box-sizing: border-box;
+    align-self: start;
 }
 .session__title {
-    width: 75%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap; 
     font: var(--primary-font);
     font-size: 32px;
-    margin: 0;
-    padding: 0;
-    margin-top: -3%;
 }
 .session__main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-content: flex-start;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: auto;
     width: 100%;
-    max-width: 720px;
-    height: 100%;
+    place-items: center center;
 }
 .session__players {
     width: 100%;
-    display: grid;
-    place-items: end center;
-    grid-template-rows: auto 1fr;
-    height: 100%;
-}
-.session__players--closed {
-    height: auto;
-}
-.session__players__board {
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
-    align-items: center;
-    border-radius: 5%;
-    width: 80%;
-    height: 100%;
-}
-.session__players__toggle {
-    height: 60px;
-    width: 100%;
-    max-width: 360px;
-    font-size: 22px;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 32px;
+    max-height: calc(90vh - 80px);
+    overflow-y: auto;
 }
 .session__control {
-    display: grid;
-    place-items: center center;
-    grid-template-rows: 1fr auto;
-    height: 100%;
-    width: 100%;
-    max-width: 360px;
-    position: relative;
+
 }
-.session__control .player {
-    width: 60%;
-    height: 60%;
-}
-.session__control--closed {
-    background: none;
-    height: auto;
-}
-.session__control__toggle {
-    height: 60px;
-    width: 100%;
-    max-width: 360px;
-    font-size: 22px;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 32px;
-}
-.session__footer {
-    display: grid;
-    place-items: center end;
-    padding: 24px;
+@media only screen and (orientation: landscape) {
+    .session__main {
+        grid-template-rows: auto;
+        grid-template-columns: 1fr 1fr;
+    }
 }

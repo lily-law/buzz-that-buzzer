@@ -1,51 +1,88 @@
 .landing {
     display: grid;
-    place-items: center start;
-    align-content: start;
-    height: 100%;
-    max-width: 480px;
-    grid-template-rows: 1fr auto auto;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: auto;
+    min-height: 100vh;
+    place-items: stretch stretch;
 }
-
-.intro__tagline {
-    width: 75%;
-    margin-left: 32px;
-}
-
-.intro__text {
-    font-size: 14px;
-    line-height: 24px;
-}
-
-.setup {
-    margin-top: 32px;
+.landing__info {
+    background: var(--white);
     place-self: center center;
+    max-width: 80%;
+    padding: 10%;
+    box-sizing: border-box;
+    z-index: 200;
+}
+.landing__setup {
+    background: var(--bg-colour-2);
+    display: grid;
+    place-items: center end;
+}
+.setup__user-name {
+    box-sizing: border-box;
+    width: 100%;
+    background: var(--bg-colour-1);
+    border: none;
+    padding: 16px;
+    padding-left: 20%;
+    margin-top: 60px;
+}
+.setup__new-session {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin-bottom: 60px;
+}
+.new-session__input {
+    box-sizing: border-box;
+    text-align: center;
+    max-width: 70%;
+    height: 40px;
+}
+.new-session__submit {
+    box-sizing: border-box;
+    background-color: var(--bg-colour-1);
+    height: 40px;
+}
+.setup__sessions {
+    box-sizing: border-box;
+    display: grid;
+    width: 80%;
+    overflow-y: auto;
+}
+.sessions__list {
+    width: 80%;
+    list-style-type: none;  
+    padding: 0;
+    max-height: 40vh;
+}
+.sessions__list__button {
     display: grid;
     place-items: center center;
-    grid-template-rows: 1fr 1fr;
-    width: 280px;
-    min-height: 200px;
-    max-width: 80%;
-    overflow: visible;
-    padding: 5%;
+    grid-template-columns: auto 30px;
+    cursor: pointer;
+    margin: 32px 0;
+    padding: 16px;
+    width: 100%;
+    background-color: var(--bg-colour-1);
+}
+.sessions__list__title {
+    padding: 0;
+    margin: 0;
+    width: 80%;
+    justify-self: center;
+    text-align: left;
+}
+.sessions__list__enter-icon {
+    width: 30px;
+    justify-self: flex-end;
 }
 
-.setup__ribbon {
-    width: 160%;
-    height: 100%;
-    display: grid;
-    place-items: center center;
-}
-.setup__input {
-    height: 40%;
-    width: 74%;
-    margin-top: -5%;
-    font-size: 24px;
-}
-.setup__input::placeholder {
-    color: var(--tertiary-colour);
-}
-.setup__submit {
-    font-size: 28px;
-    place-self: start center;
+@media only screen and (orientation: landscape) and (min-width: 940px) {
+    .landing {
+        grid-template-rows: auto;
+        grid-template-columns: auto 1fr;
+    }
 }

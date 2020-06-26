@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import icon from '../images/shareicon.svg';
+import icon from '../images/share.svg';
 
 export default function ShareLinks({title, user}) {
     const [isOpen, setIsOpen] = useState(false);
