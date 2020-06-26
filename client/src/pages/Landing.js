@@ -59,12 +59,12 @@ export default function Landing({userData, updateUserData, sessions, addToSessio
                 <input ref={userNameRef} className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} onKeyDown={e => e.key === "Enter" && e.target.blur()} value={userData.name} onBlur={storeUserData} />
                 <div className="setup__sessions">
                     {sessions.length > 0 && <>
-                        <ul className="sessions__list">
-                            {sessions.map(sess => <li key={sess.token} onClick={() => joinSession(sess)}>
+                        <div className="sessions__list">
+                            {sessions.map(sess => <button key={sess.token} onClick={() => joinSession(sess)}>
                                 {sess.title}
                                 <img src={enterIcon} alt="" />
-                            </li>)}
-                        </ul>
+                            </button>)}
+                        </div>
                     </>}
                 </div>
                 <div className="setup__new-session">
