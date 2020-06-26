@@ -56,19 +56,19 @@ export default function Landing({userData, updateUserData, sessions, addToSessio
                 <p>Create a session. Share the link. Buzz in!</p>
             </section>
             <section className="landing__setup">
-                <input ref={userNameRef} className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} value={userData.name} onBlur={storeUserData} />
+                <input ref={userNameRef} className="setup__user-name" type="text" placeholder="Name/Alias" onChange={handleSetUserName} onKeyDown={e => e.key === "Enter" && e.target.blur()} value={userData.name} onBlur={storeUserData} />
                 <div className="setup__sessions">
                     {sessions.length > 0 && <>
-                        <ul className="sessions__list">
-                            {sessions.map(sess => <li key={sess.token} onClick={() => joinSession(sess)}>
+                        <div className="sessions__list">
+                            {sessions.map(sess => <button key={sess.token} onClick={() => joinSession(sess)}>
                                 {sess.title}
                                 <img src={enterIcon} alt="" />
-                            </li>)}
-                        </ul>
+                            </button>)}
+                        </div>
                     </>}
                 </div>
                 <div className="setup__new-session">
-                    <input ref={sessionTitleRef} className="new-session__input" type="text" onChange={handleSetTitle} value={title} placeholder="New Session" />
+                    <input ref={sessionTitleRef} className="new-session__input" type="text" onChange={handleSetTitle} onKeyDown={e => e.key === "Enter" && createSession()}  value={title} placeholder="New Session" />
                     <button className="new-session__submit" onClick={createSession}>
                         <img src={addIcon} alt="+" />
                     </button>

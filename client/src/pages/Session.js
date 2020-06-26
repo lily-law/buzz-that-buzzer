@@ -6,50 +6,80 @@ import Player from '../components/Player';
 import ShareLinks from '../components/ShareLinks';
 import BigButton from '../components/BigButton';
 import exitIcon from '../images/exit.svg';
+import { readFromStore } from '../controllers/storage';
 
-export default function Session({userData, setUserData, addToSessions, sessions}) {
-    const user = userData.name;
+export default function Session({userData, updateUserData, addToSessions, sessions}) {
+    const [user, setUser] = useState(userData.name);
+    const [token, setToken] = useState();
+    const [title, setTitle] = useState('');
     const [redirect, setRedirect] = useState();
     const [nsp, setNsp] = useState();
     const [id, setId] = useState();
     const [players, setPlayers] = useState([]);
-    const [title, setTitle] = useState('');
     const [winner, setWinner] = useState('');
     const [muted, setMuted] = useState(false);
-
     const lobbySocket = useRef();
     const sessionSocket = useRef();
-    const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
     const match = useRouteMatch('/session/:id');
     useEffect(() => {
+        const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
+        // on first load get url session data
+        const getStoredUserName = async () => {
+            const storedUserData = await readFromStore("userData");
+            if (storedUserData) {
+                setUser(storedUserData.name);
+            }
+            else {
+                setRedirect(<Redirect to='/' />);
+            }
+        }
+        const getSessionURLData = async () => {
+            const matchToken = match.params.id.substr(0, 36);
+            const matchTitle = match.params.id.substr(36);
+            if (isValidSessId(matchToken)) {
+                !sessions.find(sess => sess.token === matchToken) && await addToSessions([{title: matchTitle, token: matchToken}]);
+                // wait for addToSessions so if later redirected to landing session will be there
+                setTitle(matchTitle);
+                setToken(matchToken);
+            }
+            else {
+                setRedirect(<Redirect to='/' />);
+            }
+            return
+        }
+        getSessionURLData().then(() => !user && getStoredUserName()); 
+
+        return () => {
+            sessionSocket.current && sessionSocket.current.disconnect();
+            lobbySocket.current && lobbySocket.current.disconnect();
+        }
+    }, []);
+
+    useEffect(() => {
+        // get token to join session
+        if (token && title) {
+            lobbySocket.current && !lobbySocket.current.disconnected && lobbySocket.current.disconnect();
+            lobbySocket.current = io();
+            lobbySocket.current.on('connect', () => {
+                lobbySocket.current.emit('nspreq', {sessionId: token, title});
+                lobbySocket.current.on('nsp', nsp => {
+                    setNsp(nsp.token);
+                    setTitle(nsp.title);
+                });
+                lobbySocket.current.on('disconnect', () => {
+                    setRedirect(<Redirect to='/' />);
+                });
+            });
+        }
+    }, [title, token]);
+
+    useEffect(() => {
+        
         const playerColours = {
             inUse: {},
             avaible: ['tomato', 'aqua', 'aquamarine', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgreen']
         } 
-        const knockKnock = async () => {
-            const matchToken = match.params.id.substr(0, 36);
-            const matchTitle = match.params.id.substr(36);
-            if (isValidSessId(matchToken)) {
-                await !sessions.find(sess => sess.token === matchToken) && await addToSessions([{title: matchTitle, token: matchToken}]);
-                if (user) {
-                    lobbySocket.current && !lobbySocket.current.disconnected && lobbySocket.current.disconnect();
-                    lobbySocket.current = io();
-                    lobbySocket.current.on('connect', () => {
-                        lobbySocket.current.emit('nspreq', {sessionId: matchToken, title: matchTitle});
-                        lobbySocket.current.on('nsp', nsp => {
-                            setNsp(nsp.token);
-                            setTitle(nsp.title);
-                            join();
-                        });
-                        lobbySocket.current.on('disconnect', () => {
-                            setRedirect(<Redirect to='/' />);
-                        });
-                    });
-                    return
-                }
-            }
-            setRedirect(<Redirect to='/' />);
-        };
+
         const join = () => {
             if (nsp && user) {
                 sessionSocket.current && !sessionSocket.current.disconnected && sessionSocket.current.disconnect();
@@ -81,19 +111,9 @@ export default function Session({userData, setUserData, addToSessions, sessions}
                 });
             }
         };
-        if (!nsp) {
-            knockKnock();
-        }
-        else {
-            !id && join();
-        } 
-    }, [nsp, user, id, match.params.id, addToSessions, sessions]);
-    useEffect(() => {
-        return () => {
-            sessionSocket.current && sessionSocket.current.disconnect();
-            lobbySocket.current && lobbySocket.current.disconnect();
-        }
-    }, []);
+        !id && join();
+    }, [nsp, user, id, addToSessions]);
+
     const buzz = () => sessionSocket.current.emit('buzz', Date.now());
     return (
         <div className="session">

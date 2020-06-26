@@ -1,14 +1,17 @@
 .landing {
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-columns: auto;
-    height: 100vh;
+    min-height: 100vh;
     place-items: stretch stretch;
 }
 .landing__info {
     background: var(--white);
     place-self: center center;
     max-width: 80%;
+    padding: 10%;
+    box-sizing: border-box;
+    z-index: 200;
 }
 .landing__setup {
     background: var(--bg-colour-2);
@@ -16,7 +19,6 @@
     place-items: center center;
     padding: 10% 0;
     max-height: 100%;
-    overflow: hidden;
 }
 .setup__user-name {
     box-sizing: border-box;
@@ -40,14 +42,16 @@
 .setup__sessions {
     display: grid;
     width: 80%;
-    max-height: 80%;
+    max-height: 60vh;
     overflow-y: auto;
+    margin: 5% 0;
 }
 .sessions__list {
     width: 80%;
-    list-style-type: none;
+    list-style-type: none;  
+    padding: 0;
 }
-.sessions__list li {
+.sessions__list button {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -62,6 +66,9 @@
 @media only screen and (orientation: landscape) {
     .landing {
         grid-template-rows: auto;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: auto 1fr;
+    }
+    .landing__setup { 
+        height: 100%;
     }
 }
