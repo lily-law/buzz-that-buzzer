@@ -22,22 +22,28 @@ export default function Session({userData, updateUserData, addToSessions, sessio
     const sessionSocket = useRef();
     const match = useRouteMatch('/session/:id');
     useEffect(() => {
-        const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
-        // on first load get url session data
         const getStoredUserName = async () => {
-            const storedUserData = await readFromStore("userData");
-            if (storedUserData) {
-                setUser(storedUserData.name);
+            if (!user) {
+                const storedUserData = await readFromStore("userData");
+                if (storedUserData) {
+                    setUser(storedUserData.name);
+                }
+                else {
+                    setRedirect(<Redirect to='/' />);
+                }
             }
-            else {
-                setRedirect(<Redirect to='/' />);
-            }
-        }
-        const getSessionURLData = async () => {
+            return
+        };
+        getStoredUserName();
+    }, [user]);
+    useEffect(() => {
+        if (!token) {
+            console.count('getting url data')
             const matchToken = match.params.id.substr(0, 36);
             const matchTitle = match.params.id.substr(36);
+            const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
             if (isValidSessId(matchToken)) {
-                !sessions.find(sess => sess.token === matchToken) && await addToSessions([{title: matchTitle, token: matchToken}]);
+                !sessions.find(sess => sess.token === matchToken) && addToSessions([{title: matchTitle, token: matchToken}]);
                 // wait for addToSessions so if later redirected to landing session will be there
                 setTitle(matchTitle);
                 setToken(matchToken);
@@ -45,19 +51,13 @@ export default function Session({userData, updateUserData, addToSessions, sessio
             else {
                 setRedirect(<Redirect to='/' />);
             }
-            return
         }
-        getSessionURLData().then(() => !user && getStoredUserName()); 
-
-        return () => {
-            sessionSocket.current && sessionSocket.current.disconnect();
-            lobbySocket.current && lobbySocket.current.disconnect();
-        }
-    }, []);
+    }, [addToSessions, match.params.id, sessions, token]);
 
     useEffect(() => {
         // get token to join session
         if (token && title) {
+            console.count('lobby')
             lobbySocket.current && !lobbySocket.current.disconnected && lobbySocket.current.disconnect();
             lobbySocket.current = io();
             lobbySocket.current.on('connect', () => {
@@ -70,48 +70,50 @@ export default function Session({userData, updateUserData, addToSessions, sessio
                     setRedirect(<Redirect to='/' />);
                 });
             });
+            return () => {
+                lobbySocket.current && lobbySocket.current.disconnect();
+            }
         }
     }, [title, token]);
 
     useEffect(() => {
-        
         const playerColours = {
             inUse: {},
             avaible: ['tomato', 'aqua', 'aquamarine', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgreen']
         } 
-
-        const join = () => {
-            if (nsp && user) {
-                sessionSocket.current && !sessionSocket.current.disconnected && sessionSocket.current.disconnect();
-                sessionSocket.current = io('/'+nsp);
-                sessionSocket.current.on('connect', () => {
-                    sessionSocket.current.on('players', players => {
-                        setPlayers(players.map(p => {
-                            let colour = 'white';
-                            if (!playerColours.inUse.hasOwnProperty(p.id)) {
-                                colour = playerColours.avaible.pop();
-                                playerColours.inUse[p.id] = colour;
-                            }
-                            else {
-                                colour = playerColours.inUse[p.id];
-                            }
-                            return {...p, colour }
-                        }));
-                    });
+        if (!id && nsp && user) {
+            console.count('joining')
+            sessionSocket.current && !sessionSocket.current.disconnected && sessionSocket.current.disconnect();
+            sessionSocket.current = io('/'+nsp);
+            sessionSocket.current.on('connect', () => {
+                sessionSocket.current.on('players', players => {
+                    setPlayers(players.map(p => {
+                        let colour = 'white';
+                        if (!playerColours.inUse.hasOwnProperty(p.id)) {
+                            colour = playerColours.avaible.pop();
+                            playerColours.inUse[p.id] = colour;
+                        }
+                        else {
+                            colour = playerColours.inUse[p.id];
+                        }
+                        return {...p, colour }
+                    }));
                 });
-                sessionSocket.current.emit('join', user);
-                sessionSocket.current.on('joined', id => {
-                    setId(id);
-                });
-                sessionSocket.current.on('sync', () => {
-                    sessionSocket.current.emit('sync', Date.now());
-                });
-                sessionSocket.current.on('winner', winner => {
-                    setWinner(winner);
-                });
+            });
+            sessionSocket.current.emit('join', user);
+            sessionSocket.current.on('joined', id => {
+                setId(id);
+            });
+            sessionSocket.current.on('sync', () => {
+                sessionSocket.current.emit('sync', Date.now());
+            });
+            sessionSocket.current.on('winner', winner => {
+                setWinner(winner);
+            });
+            return () => {
+                sessionSocket.current && sessionSocket.current.disconnect();
             }
-        };
-        !id && join();
+        }
     }, [nsp, user, id, addToSessions]);
 
     const buzz = () => sessionSocket.current.emit('buzz', Date.now());
