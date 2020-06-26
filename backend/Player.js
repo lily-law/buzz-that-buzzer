@@ -11,7 +11,6 @@ function Player(socket, session) {
     this.buzzed = null;
     this.offset = 0;
     this.avarageDelay = 0;
-    this.test = 543;
 }
 Player.prototype.join = function({name, colour}) {
     this.name = name;
