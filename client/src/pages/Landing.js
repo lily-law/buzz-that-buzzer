@@ -60,9 +60,9 @@ export default function Landing({userData, updateUserData, sessions, addToSessio
                 <div className="setup__sessions">
                     {sessions.length > 0 && <>
                         <div className="sessions__list">
-                            {sessions.map(sess => <button key={sess.token} onClick={() => joinSession(sess)}>
-                                {sess.title}
-                                <img src={enterIcon} alt="" />
+                            {sessions.map(sess => <button className="sessions__list__button" key={sess.token} onClick={() => joinSession(sess)}>
+                                <h3 className="sessions__list__title">{sess.title}</h3>
+                                <img className="sessions__list__enter-icon" src={enterIcon} alt="" />
                             </button>)}
                         </div>
                     </>}

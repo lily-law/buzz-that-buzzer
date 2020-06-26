@@ -1,19 +1,21 @@
 const {v4: uuidv4} = require("uuid");
+const randomHexColour = require("./randomHexColour");
 
 function Player(socket, session) {
     this.socket = socket;
     this.session = session;
     this.id = uuidv4();
-    this.name = '';
-    this.socket.on('join', user => {
-        this.join(user);
+    this.socket.on('join', userData => {
+        this.join(userData);
     });
     this.buzzed = null;
     this.offset = 0;
     this.avarageDelay = 0;
+    this.test = 543;
 }
-Player.prototype.join = function(name) {
+Player.prototype.join = function({name, colour}) {
     this.name = name;
+    this.colour = colour || randomHexColour();
     this.socket.join(this.session.title, () => {
         this.socket.emit('joined', this.id);
         this.socket.on('sync', userTime => {

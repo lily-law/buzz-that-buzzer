@@ -9,6 +9,7 @@
     box-shadow: 0px 10px 1px black;
     outline: none;
     border: none;
+    -webkit-tap-highlight-color: transparent;
 }
 .big-button:focus, .big-button::-moz-focus-inner {
     outline: none;

@@ -1,4 +1,4 @@
-export default function beep(length = 250, options = {sound: true, vibrate: true}) {
+export default function beep(length = 250, onFinish = () => null, options = {sound: true, vibrate: true}) {
     const ctx = new AudioContext();
     options.vibrate && window && window.navigator.vibrate(length);
     if (options.sound) {
@@ -9,8 +9,9 @@ export default function beep(length = 250, options = {sound: true, vibrate: true
         });
     }
     setTimeout(() => {
-        ctx.close()
+        ctx.close();
         window && window.navigator.vibrate(0);
+        onFinish();
     }, length);
 }
 

@@ -47,7 +47,7 @@ function Session(title, io, token) {
     this.getPlayers = this.getPlayers.bind(this);
 }
 Session.prototype.getPlayers = function() {
-    return Object.values(this.players).map(({name, id, buzzed}) => ({name, id, buzzed}));
+    return Object.values(this.players).map(({name, colour, id, buzzed}) => ({name, colour, id, buzzed}));
 }
 Session.prototype.buzz = function() {
     if (!this.syncStart) {
