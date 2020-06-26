@@ -9,7 +9,6 @@ import exitIcon from '../images/exit.svg';
 import { readFromStore } from '../controllers/storage';
 
 export default function Session({userData, updateUserData, addToSessions, sessions}) {
-    const [user, setUser] = useState(userData.name);
     const [token, setToken] = useState();
     const [title, setTitle] = useState('');
     const [redirect, setRedirect] = useState();
@@ -22,23 +21,20 @@ export default function Session({userData, updateUserData, addToSessions, sessio
     const sessionSocket = useRef();
     const match = useRouteMatch('/session/:id');
     useEffect(() => {
-        const getStoredUserName = async () => {
-            if (!user) {
-                const storedUserData = await readFromStore("userData");
-                if (storedUserData) {
-                    setUser(storedUserData.name);
-                }
-                else {
-                    setRedirect(<Redirect to='/' />);
-                }
+        const getStoredData = async () => {
+            const storedUserData = await readFromStore("userData");
+            if (storedUserData) {
+                updateUserData(storedUserData);
+            }
+            else {
+                setRedirect(<Redirect to='/' />);
             }
             return
         };
-        getStoredUserName();
-    }, [user]);
+        !userData.name && getStoredData();
+    }, [userData.name, updateUserData]);
     useEffect(() => {
         if (!token) {
-            console.count('getting url data')
             const matchToken = match.params.id.substr(0, 36);
             const matchTitle = match.params.id.substr(36);
             const isValidSessId = id => id.match(/^.{8}-.{4}-.{4}-.{4}-.{12}$/);
@@ -57,7 +53,6 @@ export default function Session({userData, updateUserData, addToSessions, sessio
     useEffect(() => {
         // get token to join session
         if (token && title) {
-            console.count('lobby')
             lobbySocket.current && !lobbySocket.current.disconnected && lobbySocket.current.disconnect();
             lobbySocket.current = io();
             lobbySocket.current.on('connect', () => {
@@ -77,30 +72,15 @@ export default function Session({userData, updateUserData, addToSessions, sessio
     }, [title, token]);
 
     useEffect(() => {
-        const playerColours = {
-            inUse: {},
-            avaible: ['tomato', 'aqua', 'aquamarine', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgreen']
-        } 
-        if (!id && nsp && user) {
-            console.count('joining')
+        if (!id && nsp && userData.name) {
             sessionSocket.current && !sessionSocket.current.disconnected && sessionSocket.current.disconnect();
             sessionSocket.current = io('/'+nsp);
             sessionSocket.current.on('connect', () => {
                 sessionSocket.current.on('players', players => {
-                    setPlayers(players.map(p => {
-                        let colour = 'white';
-                        if (!playerColours.inUse.hasOwnProperty(p.id)) {
-                            colour = playerColours.avaible.pop();
-                            playerColours.inUse[p.id] = colour;
-                        }
-                        else {
-                            colour = playerColours.inUse[p.id];
-                        }
-                        return {...p, colour }
-                    }));
+                    setPlayers(players);
                 });
             });
-            sessionSocket.current.emit('join', user);
+            sessionSocket.current.emit('join', userData);
             sessionSocket.current.on('joined', id => {
                 setId(id);
             });
@@ -110,11 +90,21 @@ export default function Session({userData, updateUserData, addToSessions, sessio
             sessionSocket.current.on('winner', winner => {
                 setWinner(winner);
             });
-            return () => {
-                sessionSocket.current && sessionSocket.current.disconnect();
-            }
         }
-    }, [nsp, user, id, addToSessions]);
+    }, [nsp, userData.name, id, addToSessions, userData]);
+
+    useEffect(() => {
+        if (!userData.colour && id && players.length > 0) {
+            const user = players.find(p => p.id === id);
+            user && updateUserData({colour: user.colour});
+        }
+    }, [id, players, userData.colour, updateUserData])
+
+    useEffect(() => {
+        return () => {
+            sessionSocket.current && sessionSocket.current.disconnect();
+        }
+    }, []);
 
     const buzz = () => sessionSocket.current.emit('buzz', Date.now());
     return (
@@ -123,7 +113,7 @@ export default function Session({userData, updateUserData, addToSessions, sessio
             <header className="session__header">
                 <button onClick={() => setRedirect(<Redirect to='/' />)}><img className="button-icon" src={exitIcon} title="Exit Saloon" alt="Exit" /></button>
                 <h1 className="session__title" title={title}>{title}</h1>
-                <ShareLinks {...{title, user}} />
+                <ShareLinks {...{title, user: userData.name}} />
             </header>
             <main className="session__main">
                 {id ? <>
