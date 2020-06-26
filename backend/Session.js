@@ -19,7 +19,6 @@ function Session(title, io, token) {
         socket.on('disconnect', () => {
             delete this.players[socket.id];
             const players = this.getPlayers();
-            console.log(players.length);
             if (players.length > 0) {
                 this.nsp.emit('players', players);
             }
