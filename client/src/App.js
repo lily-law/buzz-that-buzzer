@@ -12,7 +12,9 @@ import './App.css';
 function App() {
 
   const [userData, setUserData] = useState({
-    name: ""
+    name: "",
+    colour: "",
+    muted: false
   });
   const [sessions, setSessions] = useState([]);
   const addToSessions = (arr, stored) => {
@@ -35,9 +37,10 @@ function App() {
     writeToStore("sessions", newSessions);
     setSessions(newSessions);
   }
-  const updateUserData = (data, stored) => {
+  const updateUserData = (data, stored, sessionSocket) => {
     const newData = {...userData, ...data};
     !stored && writeToStore("userData", newData);
+    data.colour && sessionSocket && sessionSocket.current.emit('updateUserData', {colour: data.colour});
     setUserData(newData);
   };
   useState(() => {
