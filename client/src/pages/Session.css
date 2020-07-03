@@ -5,6 +5,18 @@
     min-height: 100vh;
     background-color: var(--bg-colour-2);
 }
+.session__lockout {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 1200;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+}
 .session__header {
     width: 100%;
     background-color: var(--bg-colour-1);
@@ -35,7 +47,15 @@
     overflow-y: auto;
 }
 .session__control {
-
+    display: grid;
+    place-items: center center;
+}
+.session__settings {
+    display: grid;
+    place-items: center center;
+}
+.settings__button__icon {
+    width: 40px;
 }
 @media only screen and (orientation: landscape) {
     .session__main {

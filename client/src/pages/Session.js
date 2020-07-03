@@ -7,6 +7,8 @@ import ShareLinks from '../components/ShareLinks';
 import BigButton from '../components/BigButton';
 import exitIcon from '../images/exit.svg';
 import { readFromStore } from '../controllers/storage';
+import settingsIcon from '../images/settings.svg';
+import Settings from '../components/Settings';
 
 export default function Session({userData, updateUserData, addToSessions, sessions}) {
     const [token, setToken] = useState();
@@ -15,11 +17,13 @@ export default function Session({userData, updateUserData, addToSessions, sessio
     const [nsp, setNsp] = useState();
     const [id, setId] = useState();
     const [players, setPlayers] = useState([]);
-    const [winner, setWinner] = useState('');
-    const [muted, setMuted] = useState(false);
+    const [buzzedIn, setBuzzedIn] = useState('');
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [lockout, setLockout] = useState(false);
     const lobbySocket = useRef();
     const sessionSocket = useRef();
     const match = useRouteMatch('/session/:id');
+    
     useEffect(() => {
         const getStoredData = async () => {
             const storedUserData = await readFromStore("userData");
@@ -85,10 +89,14 @@ export default function Session({userData, updateUserData, addToSessions, sessio
                 setId(id);
             });
             sessionSocket.current.on('sync', () => {
+                setLockout(true);
                 sessionSocket.current.emit('sync', Date.now());
             });
-            sessionSocket.current.on('winner', winner => {
-                setWinner(winner);
+            sessionSocket.current.on('nextRound', inMs => {
+                setTimeout(() => setLockout(false), inMs);
+            });
+            sessionSocket.current.on('buzzedInList', list => {
+                setBuzzedIn(list);
             });
         }
     }, [nsp, userData.name, id, addToSessions, userData]);
@@ -105,25 +113,33 @@ export default function Session({userData, updateUserData, addToSessions, sessio
             sessionSocket.current && sessionSocket.current.disconnect();
         }
     }, []);
-
     const buzz = () => sessionSocket.current.emit('buzz', Date.now());
     return (
         <div className="session">
+            {settingsOpen && <Settings {...{userData, updateUserData, sessionSocket, close: () => setSettingsOpen(false)}} />}
             {redirect && redirect}
             <header className="session__header">
-                <button onClick={() => setRedirect(<Redirect to='/' />)}><img className="button-icon" src={exitIcon} title="Exit Saloon" alt="Exit" /></button>
+                <button onClick={() => setRedirect(<Redirect to='/' />)}>
+                    <img className="button-icon" src={exitIcon} title="Exit Saloon" alt="Exit" />
+                </button>
                 <h1 className="session__title" title={title}>{title}</h1>
                 <ShareLinks {...{title, user: userData.name}} />
             </header>
             <main className="session__main">
+                {lockout && <div className="session__lockout">
+                    {players.filter(p => Number.isInteger(buzzedIn[p.id])).map(p => {
+                        return <Player key={p.id+"lockout"} {...{...p, buzzedAt: buzzedIn[p.id]}} />
+                    })}
+                </div>}
                 {id ? <>
                     <section className="session__players">
-                        {players.map(p => 
-                            <Player key={p.id} {...{...p, winner: p.id === winner}} />
+                        {players.map(p => {
+                            return <Player key={p.id} {...{...p, buzzedAt: buzzedIn[p.id]}} />
+                        }
                         )}
                     </section> 
                     <section className="session__control">
-                        <BigButton {...{buzz, muted}} />
+                        <BigButton {...{buzz, muted: userData.muted, lockout}} />
                     </section> 
                 </>:
                 <section className="session__joining">
@@ -131,9 +147,11 @@ export default function Session({userData, updateUserData, addToSessions, sessio
                 </section>
                 }
             </main>
-            <footer className="session__footer">
-    
-            </footer>
+            <div className="session__settings">
+                <button className="session__settings__button" onClick={() => setSettingsOpen(true)}>
+                    <img className="settings__button__icon" src={settingsIcon} alt="Settings" />
+                </button>
+            </div>
         </div>
     );
 }

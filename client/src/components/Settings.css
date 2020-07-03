@@ -1,0 +1,41 @@
+.settings {
+    top: 100px;
+    width: 80%;
+    height: calc(90vh - 80px);
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,0.8);
+    display: grid;
+    place-items: start stretch;
+    overflow-y: auto;
+    grid-template-rows: repeat(3, auto);
+    z-index: 1000;
+}
+.settings__header {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center center;
+}
+.settings__title-icon {
+    width: 60px;
+}
+.settings__close-icon, .settings__done-icon {
+    width: 30px;
+}
+.settings__colours {
+    display: grid;
+    place-items: center center;
+}
+.settings__colours__title {
+    color: var(--off-white-colour);
+}
+.settings__colours__input {
+    width: 60%;
+    height: 50px;
+}
+.settings__sounds {
+    display: grid;
+    place-items: center center;
+}
+.toggle__mute-button.inactive {
+    opacity: 0.5;
+}
