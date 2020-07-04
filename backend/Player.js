@@ -22,10 +22,9 @@ Player.prototype.join = function({name, colour}) {
             const start = this.session.syncStart;
             if (start) {
                 const recieved = Date.now();
-                const serverToUserDiff = start - userTime; 
                 const userToServerDiff = recieved - userTime; // add this to server time
-                const delay = userToServerDiff - serverToUserDiff;
-                this.offset = userToServerDiff - delay;
+                const averageDelay = Math.round((recieved - start)/2);
+                this.offset = userToServerDiff - averageDelay;
                 this.session.syncCount++;
             }
         });
