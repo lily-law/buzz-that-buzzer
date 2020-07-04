@@ -48,7 +48,7 @@ Session.prototype.buzz = function() {
 Session.prototype.resolveBuzz = function() {
     const buzzedIn = {}; 
     this.syncStart = null;
-    const buzzedArr = Object.values(this.players).map((p) => ({...p.userData, buzzed: p.userData.buzzed ? p.userData.buzzed+p.offset : null})).filter(({buzzed}) => buzzed).sort((a, b) => a.buzzed - b.buzzed);
+    const buzzedArr = Object.values(this.players).map((p) => ({...p.userData, buzzed: p.userData.buzzed ? p.userData.buzzed+p.offset : null})).filter(({buzzed}) => buzzed).sort((a, b) => b.buzzed - a.buzzed);
     if (buzzedArr.length === 0) {
         this.nsp.emit('buzzedInList', {});
         return
