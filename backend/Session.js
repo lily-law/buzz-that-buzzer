@@ -72,7 +72,7 @@ Session.prototype.sync = function() {
 }
 Session.prototype.dieIfInactive = function() {
     console.log('Dying if no players...');
-    if (this.nspToken && this.getPlayers().length <= 0) {
+    if (this.nspToken && Object.keys(this.players).length <= 0) {
         this.entered.forEach(socket => socket && socket.disconnect());
         this.killSelf();
     }
