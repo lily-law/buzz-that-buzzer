@@ -10,7 +10,6 @@ function Session(title, io, token) {
     this.syncStart = null;
     this.syncCount = 0;
     this.nsp.on('connection', (socket) => {
-        socket.emit('players', this.getPlayers());
         this.players[socket.id] = new Player(socket, this);
         if (this.selfTimeOut) {
             clearTimeout(this.selfTimeOut);
@@ -29,7 +28,7 @@ function Session(title, io, token) {
         });
         socket.on('sync', () => {
             if (this.syncCount >= Object.keys(this.players).length - 1) {
-                setTimeout(this.resolveBuzz, 100);
+                setTimeout(this.resolveBuzz, 100); // TODO refactor so player offset resolves as promise
             }
         });
     });
