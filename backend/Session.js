@@ -29,12 +29,13 @@ function Session(title, io, token) {
         });
         socket.on('sync', () => {
             if (this.syncCount >= Object.keys(this.players).length - 1) {
-                this.resolveBuzz();
+                setTimeout(this.resolveBuzz, 100);
             }
         });
     });
     this.dieIfInactive = this.dieIfInactive.bind(this);
     this.getPlayers = this.getPlayers.bind(this);
+    this.resolveBuzz = this.resolveBuzz.bind(this);
 }
 Session.prototype.getPlayers = function() {
     return Object.values(this.players).map(({userData}) => ({...userData}));
@@ -46,6 +47,7 @@ Session.prototype.buzz = function() {
 }
 Session.prototype.resolveBuzz = function() {
     const buzzedIn = {}; 
+    this.syncStart = null;
     const buzzedArr = Object.values(this.players).map((p) => ({...p.userData, buzzed: p.userData.buzzed ? p.userData.buzzed+p.offset : null})).filter(({buzzed}) => buzzed).sort((a, b) => a.buzzed - b.buzzed);
     if (buzzedArr.length === 0) {
         this.nsp.emit('buzzedInList', {});
@@ -57,7 +59,6 @@ Session.prototype.resolveBuzz = function() {
     });
     this.nsp.emit('buzzedInList', buzzedIn);
     this.nsp.emit('nextRound', 5000);
-    this.syncStart = null;
     Object.keys(this.players).forEach(player => {
         this.players[player].userData.buzzed = null;
     });
