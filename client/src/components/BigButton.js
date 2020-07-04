@@ -3,10 +3,10 @@ import beep from '../components/sound';
 import './BigButton.css';
 
 export default function BigButton({buzz, muted, lockout}) {
-    const [active, setActive] = useState(false);
+    const active = useRef(false);
     const handleButtonPress = e => {
-        if (!lockout && !active) {
-            setActive(true);
+        if (!lockout && !active.current) {
+            active.current = true;
             buzz();
             if (!muted) {
                 beep(500);
@@ -15,7 +15,7 @@ export default function BigButton({buzz, muted, lockout}) {
     };
     const ref = useRef();
     const reset = () => {
-        ref.current && setActive(false);
+        active.current = false;
         !lockout && window.addEventListener("keydown", handleSpaceBar, {once: true});
     }
     const handleSpaceBar = e => { 

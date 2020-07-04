@@ -90,6 +90,7 @@ export default function Session({userData, updateUserData, addToSessions, sessio
             });
             sessionSocket.current.on('sync', () => {
                 setLockout(true);
+                setBuzzedIn([]);
                 sessionSocket.current.emit('sync', Date.now());
             });
             sessionSocket.current.on('nextRound', inMs => {

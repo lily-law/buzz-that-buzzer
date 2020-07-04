@@ -20,17 +20,13 @@ Player.prototype.join = function({name, colour}) {
         this.socket.emit('joined', this.userData.id);
         this.socket.on('sync', (userTime) => {
             const start = this.session.syncStart;
-            this.session.syncCount++;
             if (start) {
                 const recieved = Date.now();
-                const serverToUserDiff = start - userTime;
-                const userToServerDiff = userTime - recieved;
-                const totalDiff = userToServerDiff + serverToUserDiff;
-                const averageDelay = (recieved - start)/2;
-                if (Math.abs((totalDiff/2) - averageDelay) > 200) {
-                    console.warn(`TotalDiff is far off averageDelay time! start: ${start}, userTime: ${userTime}, recieved: ${recieved}`)
-                }
-                this.offset = (start+serverToUserDiff) - (userTime-userToServerDiff);
+                const serverToUserDiff = start - userTime; 
+                const userToServerDiff = recieved - userTime; // add this to server time
+                const delay = userToServerDiff - serverToUserDiff;
+                this.offset = userToServerDiff - delay;
+                this.session.syncCount++;
             }
         });
         this.session.nsp.emit('players', this.session.getPlayers());
