@@ -89,9 +89,11 @@ export default function Session({userData, updateUserData, addToSessions, sessio
                 setId(id);
             });
             sessionSocket.current.on('sync', () => {
-                setLockout(true);
-                setBuzzedIn([]);
-                sessionSocket.current.emit('sync', Date.now());
+                if (!lockout) {
+                    setLockout(true);
+                    setBuzzedIn([]);
+                    sessionSocket.current.emit('sync', Date.now());
+                }
             });
             sessionSocket.current.on('nextRound', inMs => {
                 setTimeout(() => setLockout(false), inMs);
