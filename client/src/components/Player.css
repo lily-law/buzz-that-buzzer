@@ -11,6 +11,13 @@
     padding-left: 8px;
     padding-right: 8px;
     border: 5px solid transparent;
+    position: relative;
+}
+.player.dark {
+    color: var(--off-white-colour);
+}
+.player.light {
+    color: var(--primary-colour);
 }
 .player__name {
     width: 100%;
@@ -19,9 +26,26 @@
     word-wrap: break-word;
     font-size: 18px;
 }
-.winner {
-    border: 5px solid gold;
+.player__buzzed-time {
+    width: 90%;
+    position: absolute;
+    top: -10px;
+    text-align: right;
 }
-.buzzing {
-    border: 5px dotted blue;
+.player.buzzed.dark {
+    border: 2px solid var(--off-white-colour);
 }
+.player.buzzed.light {
+    border: 2px solid var(--primary-colour);
+}
+.player.winner:before {
+    background: none;
+    border: 5px dotted var(--win-colour);
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+  }
