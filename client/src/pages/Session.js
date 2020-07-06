@@ -30,7 +30,7 @@ export default function Session({userData, updateUserData, addToSessions, sessio
             if (storedUserData) {
                 updateUserData(storedUserData);
             }
-            else {
+            if (storedUserData && !storedUserData.name) {
                 setRedirect(<Redirect to='/' />);
             }
             return
