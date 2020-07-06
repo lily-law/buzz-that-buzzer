@@ -73,7 +73,7 @@ Session.prototype.sync = function() {
     this.syncCount = 0;
     setTimeout(() => {
         this.syncStart && this.resolveBuzz();
-    }, 10000)
+    }, 3000);
 }
 Session.prototype.dieIfInactive = function() {
     console.log('Dying if no players...');
