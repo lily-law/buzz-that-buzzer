@@ -69,6 +69,7 @@ Session.prototype.resolveBuzz = function() {
 Session.prototype.sync = function() {
     this.nsp.emit('sync', '');
     this.syncStart = Date.now();
+    console.log(this.syncStart)
     this.syncCount = 0;
     setTimeout(() => {
         this.syncStart && this.resolveBuzz();
