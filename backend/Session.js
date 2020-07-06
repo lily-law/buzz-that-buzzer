@@ -69,11 +69,10 @@ Session.prototype.resolveBuzz = function() {
 Session.prototype.sync = function() {
     this.nsp.emit('sync', '');
     this.syncStart = Date.now();
-    console.log(this.syncStart)
     this.syncCount = 0;
     setTimeout(() => {
         this.syncStart && this.resolveBuzz();
-    }, 10000)
+    }, 3000);
 }
 Session.prototype.dieIfInactive = function() {
     console.log('Dying if no players...');
